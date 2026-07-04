@@ -5,11 +5,23 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { MenuItemCard } from './MenuItemCard'
 import { ItemForm } from './ItemForm'
-import { updateCategory, deleteCategory } from '@/actions/categories'
 import type { Database } from '@/types/database.types'
 
 type Category = Database['public']['Tables']['categories']['Row'] & {
   menu_items: Database['public']['Tables']['menu_items']['Row'][]
+}
+type MenuItem = Database['public']['Tables']['menu_items']['Row']
+
+interface CategoryBlockProps {
+  category: Category
+  onUpdate: (updated: Partial<Category>) => void
+  onDelete: () => void
+  onItemsChange: (items: MenuItem[]) => void
+  updateCategory: (id: string, data: unknown) => Promise<{ data: unknown } | { error: unknown }>
+  deleteCategory: (id: string) => Promise<{ data: unknown } | { error: unknown }>
+  createMenuItem: (data: unknown) => Promise<{ data: MenuItem } | { error: unknown }>
+  updateMenuItem: (id: string, data: unknown) => Promise<{ data: unknown } | { error: unknown }>
+  deleteMenuItem: (id: string) => Promise<{ data: unknown } | { error: unknown }>
 }
 
 export function CategoryBlock({
@@ -17,12 +29,12 @@ export function CategoryBlock({
   onUpdate,
   onDelete,
   onItemsChange,
-}: {
-  category: Category
-  onUpdate: (updated: Partial<Category>) => void
-  onDelete: () => void
-  onItemsChange: (items: Database['public']['Tables']['menu_items']['Row'][]) => void
-}) {
+  updateCategory,
+  deleteCategory,
+  createMenuItem,
+  updateMenuItem,
+  deleteMenuItem,
+}: CategoryBlockProps) {
   const [showItemForm, setShowItemForm] = useState(false)
   const [editing, setEditing] = useState(false)
   const [name, setName] = useState(category.name)
@@ -123,6 +135,8 @@ export function CategoryBlock({
           <MenuItemCard
             key={item.id}
             item={item}
+            updateMenuItem={updateMenuItem}
+            deleteMenuItem={deleteMenuItem}
             onUpdate={(updated) =>
               onItemsChange(category.menu_items.map((i) => (i.id === updated.id ? { ...i, ...updated } : i)))
             }
@@ -133,6 +147,7 @@ export function CategoryBlock({
         {showItemForm ? (
           <ItemForm
             categoryId={category.id}
+            createMenuItem={createMenuItem}
             onSave={(newItem) => {
               onItemsChange([...category.menu_items, newItem])
               setShowItemForm(false)

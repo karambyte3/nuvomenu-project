@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { createCategory, updateCategory, deleteCategory, reorderCategories } from '@/actions/categories'
+import { createMenuItem, updateMenuItem, deleteMenuItem } from '@/actions/menu-items'
 import { MenuBuilder } from '@/components/menu/MenuBuilder'
 
 export const metadata: Metadata = { title: 'Menu builder' }
@@ -49,7 +51,18 @@ export default async function MenuPage({ params }: { params: Promise<{ id: strin
           Preview menu ↗
         </a>
       </div>
-      <MenuBuilder venueId={id} venueSlug={venue.slug} initialCategories={orderedCategories} />
+      <MenuBuilder
+        venueId={id}
+        venueSlug={venue.slug}
+        initialCategories={orderedCategories}
+        createCategory={createCategory}
+        updateCategory={updateCategory}
+        deleteCategory={deleteCategory}
+        reorderCategories={reorderCategories}
+        createMenuItem={createMenuItem}
+        updateMenuItem={updateMenuItem}
+        deleteMenuItem={deleteMenuItem}
+      />
     </div>
   )
 }

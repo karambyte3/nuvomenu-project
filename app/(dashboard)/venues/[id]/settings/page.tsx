@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { updateVenue } from '@/actions/venues'
 import { VenueSettingsForm } from './VenueSettingsForm'
 
 export const metadata: Metadata = { title: 'Venue settings' }
@@ -26,7 +27,7 @@ export default async function VenueSettingsPage({ params }: { params: Promise<{ 
         ← Back to venue
       </Link>
       <h1 className="text-2xl font-bold mb-8" style={{ color: 'var(--ink)' }}>Venue settings</h1>
-      <VenueSettingsForm venue={venue} />
+      <VenueSettingsForm venue={venue} updateVenue={updateVenue} />
     </div>
   )
 }

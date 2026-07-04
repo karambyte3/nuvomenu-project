@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { createVenue } from '@/actions/venues'
 import { NewVenueForm } from './NewVenueForm'
 
 export const metadata: Metadata = { title: 'Create venue' }
@@ -10,7 +11,7 @@ export default function NewVenuePage() {
       <p className="text-sm mb-8" style={{ color: 'var(--stone)' }}>
         Your venue will get a unique URL and QR code instantly.
       </p>
-      <NewVenueForm />
+      <NewVenueForm createVenue={createVenue} />
     </div>
   )
 }

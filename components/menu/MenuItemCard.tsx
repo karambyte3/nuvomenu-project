@@ -1,21 +1,20 @@
 'use client'
 
 import { useState } from 'react'
-import { updateMenuItem, deleteMenuItem } from '@/actions/menu-items'
 import { formatPrice } from '@/lib/utils'
 import type { Database } from '@/types/database.types'
 
 type MenuItem = Database['public']['Tables']['menu_items']['Row']
 
-export function MenuItemCard({
-  item,
-  onUpdate,
-  onDelete,
-}: {
+interface MenuItemCardProps {
   item: MenuItem
   onUpdate: (updated: Partial<MenuItem> & { id: string }) => void
   onDelete: () => void
-}) {
+  updateMenuItem: (id: string, data: unknown) => Promise<{ data: unknown } | { error: unknown }>
+  deleteMenuItem: (id: string) => Promise<{ data: unknown } | { error: unknown }>
+}
+
+export function MenuItemCard({ item, onUpdate, onDelete, updateMenuItem, deleteMenuItem }: MenuItemCardProps) {
   const [loading, setLoading] = useState(false)
 
   async function handleToggle(field: 'visible' | 'unavailable' | 'is_new' | 'is_featured') {

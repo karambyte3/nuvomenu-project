@@ -17,22 +17,37 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable'
 import { CategoryBlock } from './CategoryBlock'
-import { createCategory, reorderCategories } from '@/actions/categories'
 import type { Database } from '@/types/database.types'
 
 type Category = Database['public']['Tables']['categories']['Row'] & {
   menu_items: Database['public']['Tables']['menu_items']['Row'][]
 }
+type MenuItem = Database['public']['Tables']['menu_items']['Row']
 
-export function MenuBuilder({
-  venueId,
-  venueSlug,
-  initialCategories,
-}: {
+interface MenuBuilderProps {
   venueId: string
   venueSlug: string
   initialCategories: Category[]
-}) {
+  createCategory: (data: unknown) => Promise<{ data: Category } | { error: unknown }>
+  updateCategory: (id: string, data: unknown) => Promise<{ data: unknown } | { error: unknown }>
+  deleteCategory: (id: string) => Promise<{ data: unknown } | { error: unknown }>
+  reorderCategories: (venueId: string, ids: string[]) => Promise<{ data: unknown } | { error: unknown }>
+  createMenuItem: (data: unknown) => Promise<{ data: MenuItem } | { error: unknown }>
+  updateMenuItem: (id: string, data: unknown) => Promise<{ data: unknown } | { error: unknown }>
+  deleteMenuItem: (id: string) => Promise<{ data: unknown } | { error: unknown }>
+}
+
+export function MenuBuilder({
+  venueId,
+  initialCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  reorderCategories,
+  createMenuItem,
+  updateMenuItem,
+  deleteMenuItem,
+}: MenuBuilderProps) {
   const [categories, setCategories] = useState(initialCategories)
   const [newCategoryName, setNewCategoryName] = useState('')
   const [isPending, startTransition] = useTransition()
@@ -92,6 +107,11 @@ export function MenuBuilder({
                   cats.map((c) => (c.id === category.id ? { ...c, menu_items: items } : c))
                 )
               }
+              updateCategory={updateCategory}
+              deleteCategory={deleteCategory}
+              createMenuItem={createMenuItem}
+              updateMenuItem={updateMenuItem}
+              deleteMenuItem={deleteMenuItem}
             />
           ))}
         </SortableContext>

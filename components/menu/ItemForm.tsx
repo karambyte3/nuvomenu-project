@@ -1,20 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { createMenuItem } from '@/actions/menu-items'
 import type { Database } from '@/types/database.types'
 
 type MenuItem = Database['public']['Tables']['menu_items']['Row']
 
-export function ItemForm({
-  categoryId,
-  onSave,
-  onCancel,
-}: {
+interface ItemFormProps {
   categoryId: string
   onSave: (item: MenuItem) => void
   onCancel: () => void
-}) {
+  createMenuItem: (data: unknown) => Promise<{ data: MenuItem } | { error: unknown }>
+}
+
+export function ItemForm({ categoryId, onSave, onCancel, createMenuItem }: ItemFormProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 

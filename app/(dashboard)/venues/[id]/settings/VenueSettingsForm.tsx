@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { updateVenue } from '@/actions/venues'
 import type { Database } from '@/types/database.types'
 
 type Venue = Database['public']['Tables']['venues']['Row']
+type UpdateVenueFn = (id: string, data: unknown) => Promise<{ data: unknown } | { error: unknown }>
 
-export function VenueSettingsForm({ venue }: { venue: Venue }) {
+export function VenueSettingsForm({ venue, updateVenue }: { venue: Venue; updateVenue: UpdateVenueFn }) {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)

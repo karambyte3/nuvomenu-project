@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createVenue } from '@/actions/venues'
 
-export function NewVenueForm() {
+type CreateVenueFn = (data: unknown) => Promise<{ data: { id: string } } | { error: unknown }>
+
+export function NewVenueForm({ createVenue }: { createVenue: CreateVenueFn }) {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
